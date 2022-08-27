@@ -1,0 +1,12 @@
+List of parameters
+------------------------------------------
+device_type:1
+device_id:3
+device_longitude:-74.06540393829346
+device_latitude:4.599621212410936
+device_elevation:0.0
+device_radius:5.0
+device_hide:0
+device_draw_battery:true
+device_sensor_unit_radius:20.0
+device_script_file_name:Sen2.csc
