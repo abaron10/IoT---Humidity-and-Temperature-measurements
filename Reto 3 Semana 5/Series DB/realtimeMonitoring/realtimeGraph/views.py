@@ -608,7 +608,7 @@ class RemaView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         measureParam = self.kwargs.get("measure", None)
-        isRange = self.kwargs.get('range', None)
+        isRange = self.request.GET.get('is_range', 0)
 
         selectedMeasure = None
         measurements = Measurement.objects.all()
@@ -650,7 +650,7 @@ class RemaView(TemplateView):
 
         data = []
         avoidtime = False
-        if not isRange:
+        if isRange == 0:
             start, end = fromDates() 
             start_ts = int(start.timestamp() * 1000000)
             end_ts = int(end.timestamp() * 1000000)
