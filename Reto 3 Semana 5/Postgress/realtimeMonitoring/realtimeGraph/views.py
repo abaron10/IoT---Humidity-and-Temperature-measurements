@@ -478,7 +478,7 @@ class RemaView(TemplateView):
                     station__in=stations, measurement__name=selectedMeasure.name,  time__gte=start.date(), time__lte=end.date())
             else:
                 locationData = Data.objects.filter(
-                    station__in=stations, measurement__name=selectedMeasure.name)
+                    station__in=stations, measurement__name=selectedMeasure.name, time__gte=start.date(), time__lte=end.date())
 
             if locationData.count() <= 0:
                 continue
