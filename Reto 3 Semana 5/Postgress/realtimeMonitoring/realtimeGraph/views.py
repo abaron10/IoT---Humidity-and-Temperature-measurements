@@ -457,8 +457,7 @@ class RemaView(TemplateView):
                 start = datetime.fromtimestamp(0)
             return [start,end]          
 
-        def fromRanges():
-            isRange = int(isRange)
+        def fromRanges(isRange):
             startRange = float(self.request.GET.get('start_range', 0))
             endRange = float(self.request.GET.get('end_range', 0))
             return [startRange, endRange]
@@ -467,11 +466,11 @@ class RemaView(TemplateView):
 
 
         avoidtime = False
-        if isRange == 0:
+        if isRange == "0":
             start, end = fromDates()
         else:
             avoidtime = True
-            startRange , endRange = fromRanges()
+            startRange , endRange = fromRanges(isRange)
 
         data = []
 
@@ -481,7 +480,7 @@ class RemaView(TemplateView):
             if not avoidtime:
                 locationData = Data.objects.filter(
                     station__in=stations, measurement__name=selectedMeasure.name,  time__gte=start.date(), time__lte=end.date())
-            else:
+            else"
                 locationData = Data.objects.filter(
                     station__in=stations, measurement__name=selectedMeasure.name,  value__gte=startRange, value__lte=endRange)
 

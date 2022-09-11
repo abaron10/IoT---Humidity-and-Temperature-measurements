@@ -650,7 +650,7 @@ class RemaView(TemplateView):
 
         data = []
         avoidtime = False
-        if isRange == 0:
+        if isRange == "0":
             start, end = fromDates() 
             start_ts = int(start.timestamp() * 1000000)
             end_ts = int(end.timestamp() * 1000000)
