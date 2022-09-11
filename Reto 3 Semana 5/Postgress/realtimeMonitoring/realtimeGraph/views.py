@@ -457,21 +457,16 @@ class RemaView(TemplateView):
                 start = datetime.fromtimestamp(0)
             return [start,end]          
 
-        def fromRanges(isRange):
-            startRange = float(self.request.GET.get('start_range', 0))
-            endRange = float(self.request.GET.get('end_range', 0))
-            return [startRange, endRange]
-
-
-
-
         avoidtime = False
         start , end = None, None
+        startRange = 0
+        endRange = 0
         if isRange == "0":
             start, end = fromDates()
         else:
             avoidtime = True
-            startRange , endRange = fromRanges(isRange)
+            startRange = float(self.request.GET.get('start_range', 0))
+            endRange = float(self.request.GET.get('end_range', 0))
 
         data = []
 
