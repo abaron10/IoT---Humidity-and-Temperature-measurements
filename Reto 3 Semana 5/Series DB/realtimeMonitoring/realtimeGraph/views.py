@@ -659,7 +659,7 @@ class RemaView(TemplateView):
             avoidtime = True
             startRange , endRange = fromRanges() 
 
-
+        print("test")
         for location in locations:
             stations = Station.objects.filter(location=location)
             if not avoidtime:
