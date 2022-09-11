@@ -469,7 +469,7 @@ class RemaView(TemplateView):
             endRange = float(self.request.GET.get('end_range', 0))
 
         data = []
-
+        print(f"start es {startRange}, end es {endRange}")
         for location in locations:
             stations = Station.objects.filter(location=location)
             
