@@ -461,6 +461,7 @@ class RemaView(TemplateView):
         start , end = None, None
         startRange = 0
         endRange = 0
+        print(f"{isRange}")
         if isRange == "0":
             start, end = fromDates()
         else:
