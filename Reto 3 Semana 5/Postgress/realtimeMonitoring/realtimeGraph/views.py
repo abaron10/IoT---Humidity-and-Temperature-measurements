@@ -422,6 +422,7 @@ class RemaView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         measureParam = self.kwargs.get('measure', None)
+        isRange = self.kwargs.get('range', None)
         selectedMeasure = None
         measurements = Measurement.objects.all()
 
@@ -431,34 +432,62 @@ class RemaView(TemplateView):
             selectedMeasure = measurements[0]
 
         locations = Location.objects.all()
-        try:
-            start = datetime.fromtimestamp(
-                float(self.request.GET.get('from', None))/1000)
-        except:
-            start = None
-        try:
-            end = datetime.fromtimestamp(
-                float(self.request.GET.get('to', None))/1000)
-        except:
-            end = None
-        if start == None and end == None:
-            start = datetime.now()
-            start = start - \
-                dateutil.relativedelta.relativedelta(
-                    weeks=1)
-            end = datetime.now()
-            end += dateutil.relativedelta.relativedelta(days=1)
-        elif end == None:
-            end = datetime.now()
-        elif start == None:
-            start = datetime.fromtimestamp(0)
+       
+        def fromDates():
+            try:
+                start = datetime.fromtimestamp(
+                        float(self.request.GET.get('from', None))/1000)
+            except:
+                start = None
+            try:
+                end = datetime.fromtimestamp(
+                    float(self.request.GET.get('to', None))/1000)
+            except:
+                end = None
+            if start == None and end == None:
+                start = datetime.now()
+                start = start - \
+                    dateutil.relativedelta.relativedelta(
+                        weeks=1)
+                end = datetime.now()
+                end += dateutil.relativedelta.relativedelta(days=1)
+            elif end == None:
+                end = datetime.now()
+            elif start == None:
+                start = datetime.fromtimestamp(0)
+            return [start,end]          
+
+        def fromRanges():
+            try:
+                startRange = float(self.request.GET.get('start_range', None))
+                endRange = float(self.request.GET.get('end_range', None))
+            except:
+                startRange = 0
+                endRange = 0
+            return [startRange, endRange]
+
+
+
+
+        avoidtime = False
+        if not isRange:
+            avoidtime = True
+            start, end = fromDates()
+        else:
+            startRange , endRange = fromRanges()
 
         data = []
 
         for location in locations:
             stations = Station.objects.filter(location=location)
-            locationData = Data.objects.filter(
-                station__in=stations, measurement__name=selectedMeasure.name,  time__gte=start.date(), time__lte=end.date())
+            
+            if not avoidtime:
+                locationData = Data.objects.filter(
+                    station__in=stations, measurement__name=selectedMeasure.name,  time__gte=start.date(), time__lte=end.date())
+            else:
+                locationData = Data.objects.filter(
+                    station__in=stations, measurement__name=selectedMeasure.name,  value__gte=startRange, value__lte=endRange)
+
             if locationData.count() <= 0:
                 continue
             minVal = locationData.aggregate(
