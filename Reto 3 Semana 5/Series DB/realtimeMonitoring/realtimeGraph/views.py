@@ -496,6 +496,7 @@ def get_map_json(request, **kwargs):
     data_result = {}
 
     measureParam = kwargs.get("measure", None)
+    isRange = request.GET.get('is_range', 0)
     selectedMeasure = None
     measurements = Measurement.objects.all()
 
@@ -505,37 +506,56 @@ def get_map_json(request, **kwargs):
         selectedMeasure = measurements[0]
 
     locations = Location.objects.all()
-    try:
-        start = datetime.fromtimestamp(
-            float(request.GET.get("from", None)) / 1000
-        )
-    except:
-        start = None
-    try:
-        end = datetime.fromtimestamp(
-            float(request.GET.get("to", None)) / 1000)
-    except:
-        end = None
-    if start == None and end == None:
-        start = datetime.now()
-        start = start - dateutil.relativedelta.relativedelta(weeks=1)
-        end = datetime.now()
-        end += dateutil.relativedelta.relativedelta(days=1)
-    elif end == None:
-        end = datetime.now()
-    elif start == None:
-        start = datetime.fromtimestamp(0)
+
+    def fromDates():
+        try:
+            start = datetime.fromtimestamp(
+                float(request.GET.get("from", None)) / 1000
+            )
+        except:
+            start = None
+        try:
+            end = datetime.fromtimestamp(
+                float(request.GET.get("to", None)) / 1000)
+        except:
+            end = None
+        if start == None and end == None:
+            start = datetime.now()
+            start = start - dateutil.relativedelta.relativedelta(weeks=1)
+            end = datetime.now()
+            end += dateutil.relativedelta.relativedelta(days=1)
+        elif end == None:
+            end = datetime.now()
+        elif start == None:
+            start = datetime.fromtimestamp(0)
 
     data = []
 
-    start_ts = int(start.timestamp() * 1000000)
-    end_ts = int(end.timestamp() * 1000000)
+    start , end = None, None
+    if isRange == "0":
+        start, end = fromDates()
+        start_ts = int(start.timestamp() * 1000000)
+        end_ts = int(end.timestamp() * 1000000)
+
+    else:
+        avoidtime = True
+        startRange = float(request.GET.get('start_range', 0))
+        endRange = float(request.GET.get('end_range', 0))
 
     for location in locations:
         stations = Station.objects.filter(location=location)
-        locationData = Data.objects.filter(
-            station__in=stations, measurement__name=selectedMeasure.name, time__gte=start_ts, time__lte=end_ts,
-        )
+        
+        if not avoidtime:
+            locationData = Data.objects.filter(
+                station__in=stations, measurement__name=selectedMeasure.name, time__gte=start_ts, time__lte=end_ts,
+            )
+        else:
+            locationData = Data.objects.filter(
+                    station__in=stations, measurement__name=selectedMeasure.name, value__gte=startRange, value__lte=endRange)
+
+
+
+
         if locationData.count() <= 0:
             continue
         minVal = locationData.aggregate(Min("min_value"))["min_value__min"]

@@ -545,7 +545,6 @@ def get_map_json(request, **kwargs):
     data_result = {}
     measureParam = kwargs.get("measure", None)
     isRange = request.GET.get('is_range', 0)
-    print(f"{isRange}")
     selectedMeasure = None
     measurements = Measurement.objects.all()
 
