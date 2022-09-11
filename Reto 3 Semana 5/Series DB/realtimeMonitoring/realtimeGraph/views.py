@@ -644,12 +644,8 @@ class RemaView(TemplateView):
             return [start, end]
 
         def fromRanges():
-            try:
-                startRange = float(self.request.GET.get('start_range', None))
-                endRange = float(self.request.GET.get('end_range', None))
-            except:
-                startRange = 0
-                endRange = 0
+            startRange = float(self.request.GET.get('start_range', 0))
+            endRange = float(self.request.GET.get('end_range', 0))
             return [startRange, endRange]
 
         data = []
@@ -673,7 +669,6 @@ class RemaView(TemplateView):
                 locationData = Data.objects.filter(
                     station__in=stations, measurement__name=selectedMeasure.name, value__gte=startRange, value__lte=endRange,
                 )
-
             if locationData.count() <= 0:
                 continue
             minVal = locationData.aggregate(Min("min_value"))["min_value__min"]
