@@ -543,7 +543,7 @@ La respuesta tiene esta estructura:
 
 def get_map_json(request, **kwargs):
     data_result = {}
-
+    print("ENTROOOOOO")
     measureParam = kwargs.get("measure", None)
     isRange = request.GET.get('is_range', 0)
     selectedMeasure = None
