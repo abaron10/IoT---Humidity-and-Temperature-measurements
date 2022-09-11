@@ -466,6 +466,7 @@ class RemaView(TemplateView):
 
 
         avoidtime = False
+        start , end = None, None
         if isRange == "0":
             start, end = fromDates()
         else:
