@@ -551,7 +551,7 @@ def get_map_json(request, **kwargs):
             )
         else:
             locationData = Data.objects.filter(
-                    station__in=stations, measurement__name=selectedMeasure.name, value__gte=startRange, value__lte=endRange)
+                    station__in=stations, measurement__name=selectedMeasure.name, min_value__gte=startRange, max_value__lte=endRange)
 
 
 
